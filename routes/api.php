@@ -19,7 +19,7 @@ Route::get('/', function () {
         'app' => env('APP_NAME'),
         'repository' => 'https://github.com/SkyyInfinity/shoppingify-api',
         'laravel' => app()->version(),
-        'status' => 200,
+        'status' => 'OK',
     ];
 });
 
