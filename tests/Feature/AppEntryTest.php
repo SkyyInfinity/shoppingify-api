@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use function Pest\Laravel\get;
+
 it('has app entry page', function () {
-    $this->get('/')->assertOk();
+    get('/')->assertOk();
 });

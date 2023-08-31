@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/', function () {
+    return [
+        'app' => env('APP_NAME'),
+        'repository' => 'https://github.com/SkyyInfinity/shoppingify-api',
+        'laravel' => app()->version(),
+        'status' => 200
+    ];
+});
+
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+
+require __DIR__.'/auth.php';
