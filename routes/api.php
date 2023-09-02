@@ -16,13 +16,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return [
-        'app' => env('APP_NAME'),
+        'app' => config('app.name'),
         'repository' => 'https://github.com/SkyyInfinity/shoppingify-api',
         'laravel' => app()->version(),
-        'status' => 'OK',
+        'status' => 200,
     ];
 });
 
+# EMAILS
+Route::post('/test-mail', [App\Http\Controllers\MailController::class, 'sendTestMail'])->name('test.mail');
+
+# AUTH
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
