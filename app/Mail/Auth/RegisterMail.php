@@ -30,8 +30,10 @@ class RegisterMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $app_name = config('app.name');
+
         return new Envelope(
-            subject: 'Bienvenue sur '.config('app.name'),
+            subject: "Bienvenue sur $app_name ! 🎉",
         );
     }
 

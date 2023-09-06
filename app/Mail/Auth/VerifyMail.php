@@ -30,8 +30,10 @@ class VerifyMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $app_name = config('app.name');
+
         return new Envelope(
-            subject: 'Vous êtes fin prêt à utiliser '.config('app.name'),
+            subject: "Vous êtes fin prêt à utiliser $app_name ! 🛒",
         );
     }
 

@@ -1,5 +1,5 @@
 <x-mail::message>
-# Bravo {{ $user->username }},
+# C'est tout bon {{ $user->username }} ✅,
 
 Votre adresse e-mail a été enregistrée avec succès, vous pouvez désormais vous connecter à votre compte.
 
