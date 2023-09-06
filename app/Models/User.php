@@ -11,6 +11,8 @@ use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
+ * @phpstan-ignore-next-line
+ *
  * @mixin IdeHelperUser
  */
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
