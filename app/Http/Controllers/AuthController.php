@@ -65,6 +65,9 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function verify(MailController $mailController): JsonResponse
     {
         // Validate request
