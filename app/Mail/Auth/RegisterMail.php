@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Auth;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class TestMail extends Mailable
+class RegisterMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -18,7 +18,7 @@ class TestMail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     public function __construct(array $data = [])
     {
@@ -31,7 +31,7 @@ class TestMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Test Mail',
+            subject: 'Bienvenue sur '  . config('app.name'),
         );
     }
 
@@ -41,7 +41,7 @@ class TestMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.test',
+            markdown: 'emails.auth.register',
         );
     }
 

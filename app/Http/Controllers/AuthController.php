@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Mail\Auth\OnRegisterMail;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -14,15 +18,100 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'verify']]);
+    }
+
+    /**
+     * Register a new user.
+     *
+     * @return JsonResponse
+     * @throws ValidationException
+     */
+    public function register(UtilsController $utils, MailController $mailController): JsonResponse
+    {
+        // Validate request
+        $this->validate(request(), [
+            'username' => 'required|string',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:5',
+        ]);
+        $subscriber = request(['username', 'email', 'password']);
+
+        // Generate token
+        $token = $utils->generateToken();
+
+        // Create user
+        $user = User::create([
+            'username' => $subscriber['username'],
+            'email' => $subscriber['email'],
+            'password' => Hash::make($subscriber['password']),
+            'action_token' => $token,
+        ]);
+
+        // Send email to user with token and user data
+        try {
+            $mailController->sendRegisterMail($user->email, [
+                'user' => $user,
+                'token' => $token,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Email not sent!',
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        // Return response
+        return response()->json([
+            'message' => 'User successfully registered!',
+            'success' => true,
+        ]);
+    }
+
+    public function verify(MailController $mailController): JsonResponse
+    {
+        // Validate request
+        $this->validate(request(), [
+            'token' => 'required|string',
+        ]);
+
+        // Get request params
+        $id = request('id');
+        $token = request('token');
+
+        // Find user
+        $user = User::where('id', $id)->firstOrFail();
+
+        // Update user with verified email
+        $user->action_token = null;
+        $user->email_verified_at = now();
+        $user->save();
+
+        // Send email to user with token and user data
+        try {
+            $mailController->sendVerifyMail($user->email, [
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Email not sent!',
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        // Return response
+        return response()->json([
+            'message' => 'Email verified successfully!',
+            'success' => true,
+        ]);
     }
 
     /**
      * Get a JWT via given credentials.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function login()
+    public function login(): JsonResponse
     {
         $credentials = request(['email', 'password']);
 
@@ -36,9 +125,9 @@ class AuthController extends Controller
     /**
      * Get the authenticated User.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function me()
+    public function me(): JsonResponse
     {
         return response()->json(auth()->user());
     }
@@ -46,9 +135,9 @@ class AuthController extends Controller
     /**
      * Log the user out (Invalidate the token).
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function logout()
+    public function logout(): JsonResponse
     {
         auth()->logout();
 
@@ -58,9 +147,9 @@ class AuthController extends Controller
     /**
      * Refresh a token.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function refresh()
+    public function refresh(): JsonResponse
     {
         return $this->respondWithToken(auth()->refresh());
     }
@@ -68,16 +157,15 @@ class AuthController extends Controller
     /**
      * Get the token array structure.
      *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @param  string  $token
+     * @return JsonResponse
      */
-    protected function respondWithToken($token)
+    protected function respondWithToken(string $token): JsonResponse
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60, // @phpstan-ignore-line
         ]);
     }
 }

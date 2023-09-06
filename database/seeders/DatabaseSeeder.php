@@ -13,12 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         \App\Models\User::factory()->create([
-             'username' => 'Admin316',
-             'email' => 'admin@example.com',
-             'email_verified_at' => now(),
-             'password' => Hash::make('admin'),
-         ]);
+        \App\Models\User::factory()->create([
+            'username' => 'Admin316',
+            'email' => 'admin@example.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('admin'),
+        ]);
 
         \App\Models\User::factory(10)->create();
     }

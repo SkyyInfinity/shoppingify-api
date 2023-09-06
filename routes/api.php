@@ -19,16 +19,18 @@ Route::get('/', function () {
         'app' => config('app.name'),
         'repository' => 'https://github.com/SkyyInfinity/shoppingify-api',
         'laravel' => app()->version(),
+        'php' => PHP_VERSION,
+        'message' => 'Welcome to the Shoppingify API!',
         'status' => 200,
     ];
-});
+})->name('home');
 
-# EMAILS
+// EMAILS
 Route::post('/test-mail', [App\Http\Controllers\MailController::class, 'sendTestMail'])->name('test.mail');
 
-# AUTH
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
+// AUTH
+//Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+//    return $request->user();
+//});
 
 require __DIR__.'/auth.php';

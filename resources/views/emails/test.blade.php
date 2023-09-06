@@ -1,12 +1,12 @@
 <x-mail::message>
-# Introduction
+# Titre du mail
 
-The body of your message.
+Ceci est un exemple de mail, il a été envoyé par {{ $name }}
 
-<x-mail::button :url="''">
-Button Text
+<x-mail::button :url="route('home')">
+Accéder au site
 </x-mail::button>
 
-Thanks,<br>
+Merci,<br>
 {{ config('app.name') }}
 </x-mail::message>
