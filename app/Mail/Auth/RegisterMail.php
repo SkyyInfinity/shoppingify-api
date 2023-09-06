@@ -18,7 +18,7 @@ class RegisterMail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function __construct(array $data = [])
     {
@@ -31,7 +31,7 @@ class RegisterMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Bienvenue sur '  . config('app.name'),
+            subject: 'Bienvenue sur '.config('app.name'),
         );
     }
 

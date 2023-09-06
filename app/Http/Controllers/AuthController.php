@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\Auth\OnRegisterMail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -24,7 +22,6 @@ class AuthController extends Controller
     /**
      * Register a new user.
      *
-     * @return JsonResponse
      * @throws ValidationException
      */
     public function register(UtilsController $utils, MailController $mailController): JsonResponse
@@ -90,7 +87,7 @@ class AuthController extends Controller
         // Send email to user with token and user data
         try {
             $mailController->sendVerifyMail($user->email, [
-                'user' => $user
+                'user' => $user,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -108,8 +105,6 @@ class AuthController extends Controller
 
     /**
      * Get a JWT via given credentials.
-     *
-     * @return JsonResponse
      */
     public function login(): JsonResponse
     {
@@ -124,8 +119,6 @@ class AuthController extends Controller
 
     /**
      * Get the authenticated User.
-     *
-     * @return JsonResponse
      */
     public function me(): JsonResponse
     {
@@ -134,8 +127,6 @@ class AuthController extends Controller
 
     /**
      * Log the user out (Invalidate the token).
-     *
-     * @return JsonResponse
      */
     public function logout(): JsonResponse
     {
@@ -146,8 +137,6 @@ class AuthController extends Controller
 
     /**
      * Refresh a token.
-     *
-     * @return JsonResponse
      */
     public function refresh(): JsonResponse
     {
@@ -156,9 +145,6 @@ class AuthController extends Controller
 
     /**
      * Get the token array structure.
-     *
-     * @param  string  $token
-     * @return JsonResponse
      */
     protected function respondWithToken(string $token): JsonResponse
     {

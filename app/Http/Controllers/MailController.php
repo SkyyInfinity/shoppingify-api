@@ -32,9 +32,7 @@ class MailController extends Controller
     }
 
     /**
-     * @param string $to
-     * @param array<string, mixed> $data
-     * @return JsonResponse
+     * @param  array<string, mixed>  $data
      */
     public function sendRegisterMail(string $to, array $data): JsonResponse
     {
@@ -54,9 +52,7 @@ class MailController extends Controller
     }
 
     /**
-     * @param string $to
-     * @param array<string, mixed> $data
-     * @return JsonResponse
+     * @param  array<string, mixed>  $data
      */
     public function sendVerifyMail(string $to, array $data): JsonResponse
     {
