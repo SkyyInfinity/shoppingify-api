@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -12,7 +13,6 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @phpstan-ignore-next-line
- *
  * @mixin IdeHelperUser
  */
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
@@ -70,5 +70,13 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
             'username' => $this->username,
             'email' => $this->email,
         ];
+    }
+
+    /**
+     * Get the shopping list associated with the user.
+     */
+    public function shoppingList(): HasOne
+    {
+        return $this->hasOne(ShoppingList::class, 'user_id', 'id');
     }
 }

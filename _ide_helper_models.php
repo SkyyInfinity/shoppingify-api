@@ -12,8 +12,34 @@
 
 namespace App\Models{
 /**
+ * App\Models\ShoppingList
+ *
+ * @property string $id
+ * @property string $user_id
+ * @property string $name
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\ShoppingListFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ShoppingList newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ShoppingList newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ShoppingList query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ShoppingList whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShoppingList whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShoppingList whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShoppingList whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShoppingList whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShoppingList whereUserId($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperShoppingList {}
+}
+
+namespace App\Models{
+/**
  * App\Models\User
  *
+ * @phpstan-ignore-next-line 
  * @property string $id
  * @property string $username
  * @property string $email
@@ -24,6 +50,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \App\Models\ShoppingList|null $shoppingList
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])

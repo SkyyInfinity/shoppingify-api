@@ -34,3 +34,11 @@ Route::post('/test-mail', [App\Http\Controllers\MailController::class, 'sendTest
 //});
 
 require __DIR__.'/auth.php';
+
+// SHOPPING LISTS
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'lists',
+], function ($router) {
+    require __DIR__.'/shoppingList.php';
+});
