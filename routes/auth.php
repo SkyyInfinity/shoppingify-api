@@ -6,18 +6,19 @@
 //use App\Http\Controllers\Auth\PasswordResetLinkController;
 //use App\Http\Controllers\Auth\RegisteredUserController;
 //use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth',
 ], function ($router) {
-    Route::post('register', [\App\Http\Controllers\AuthController::class, 'register'])->name('auth.register');
-    Route::post('verify', [\App\Http\Controllers\AuthController::class, 'verify'])->name('auth.verify');
-    Route::post('login', [\App\Http\Controllers\AuthController::class, 'login'])->name('auth.login');
-    Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('auth.logout');
-    Route::post('refresh', [\App\Http\Controllers\AuthController::class, 'refresh'])->name('auth.refresh');
-    Route::post('me', [\App\Http\Controllers\AuthController::class, 'me'])->name('auth.me');
+    Route::post('register', [AuthController::class, 'register'])->name('auth.register');
+    Route::post('verify', [AuthController::class, 'verify'])->name('auth.verify');
+    Route::post('login', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
+    Route::post('refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
+    Route::post('me', [AuthController::class, 'me'])->name('auth.me');
 });
 
 //Route::post('/register', [RegisteredUserController::class, 'store'])

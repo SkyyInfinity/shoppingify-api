@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @phpstan-ignore-next-line
+ *
  * @mixin IdeHelperShoppingList
  */
 class ShoppingList extends Model
