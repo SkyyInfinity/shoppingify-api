@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,26 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return [
-        'app' => config('app.name'),
-        'repository' => 'https://github.com/SkyyInfinity/shoppingify-api',
-        'laravel' => app()->version(),
-        'php' => PHP_VERSION,
-        'message' => 'Welcome to the Shoppingify API!',
-        'status' => 200,
-    ];
-})->name('home');
-
-// EMAILS
-Route::post('/test-mail', [App\Http\Controllers\MailController::class, 'sendTestMail'])->name('test.mail');
-
-// AUTH
-//Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-//    return $request->user();
-//});
-
-require __DIR__.'/auth.php';
-
-// SHOPPING LISTS
-require __DIR__.'/shoppingList.php';
+/**
+ * Home page
+ */
+Route::get('/', [HomeController::class, 'index'])->name('home.index');

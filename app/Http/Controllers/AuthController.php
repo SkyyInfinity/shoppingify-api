@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\SignUpRequest;
+use App\Http\Requests\Auth\VerifyRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +18,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'verify']]);
+        $this->middleware('auth:api', ['except' => ['signIn', 'signUp', 'verify']]);
     }
 
     /**
@@ -24,15 +26,10 @@ class AuthController extends Controller
      *
      * @throws ValidationException
      */
-    public function register(UtilsController $utils, MailController $mailController): JsonResponse
+    public function signUp(SignUpRequest $request, UtilsController $utils, MailController $mailController): JsonResponse
     {
         // Validate request
-        $this->validate(request(), [
-            'username' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:5',
-        ]);
-        $subscriber = request(['username', 'email', 'password']);
+        $subscriber = $request->validated();
 
         // Generate token
         $token = $utils->generateToken();
@@ -47,7 +44,7 @@ class AuthController extends Controller
 
         // Send email to user with token and user data
         try {
-            $mailController->sendRegisterMail($user->email, [
+            $mailController->signUpMail($user->email, [
                 'user' => $user,
                 'token' => $token,
             ]);
@@ -68,19 +65,40 @@ class AuthController extends Controller
     /**
      * @throws ValidationException
      */
-    public function verify(MailController $mailController): JsonResponse
+    public function verify(VerifyRequest $request, MailController $mailController): JsonResponse
     {
         // Validate request
-        $this->validate(request(), [
-            'token' => 'required|string',
-        ]);
+        $request->validated();
 
         // Get request params
-        $id = request('id');
-        $token = request('token');
+        $id = $request->input('id');
+        $token = $request->input('token');
 
         // Find user
-        $user = User::where('id', $id)->firstOrFail();
+        try {
+            $user = User::where('id', $id)->firstOrFail();
+
+            // Check if user is already verified
+            if ($user->email_verified_at) {
+                return response()->json([
+                    'message' => 'Email already verified!',
+                    'success' => false,
+                ], 400);
+            }
+
+            // Check if token is valid
+            if ($user->action_token !== $token) {
+                return response()->json([
+                    'message' => 'Invalid or expired token!',
+                    'success' => false,
+                ], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'User not found!',
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         // Update user with verified email
         $user->action_token = null;
@@ -89,7 +107,7 @@ class AuthController extends Controller
 
         // Send email to user with token and user data
         try {
-            $mailController->sendVerifyMail($user->email, [
+            $mailController->verifyMail($user->email, [
                 'user' => $user,
             ]);
         } catch (\Exception $e) {
@@ -109,7 +127,7 @@ class AuthController extends Controller
     /**
      * Get a JWT via given credentials.
      */
-    public function login(): JsonResponse
+    public function signIn(): JsonResponse
     {
         $credentials = request(['email', 'password']);
 
@@ -131,7 +149,7 @@ class AuthController extends Controller
     /**
      * Log the user out (Invalidate the token).
      */
-    public function logout(): JsonResponse
+    public function signOut(): JsonResponse
     {
         auth()->logout();
 

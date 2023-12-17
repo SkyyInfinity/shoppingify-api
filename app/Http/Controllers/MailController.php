@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Mail;
 
 class MailController extends Controller
 {
-    public function sendTestMail(): JsonResponse
+    public function testMail(): JsonResponse
     {
         $name = 'Dylan Hautecoeur';
 
@@ -34,7 +34,7 @@ class MailController extends Controller
     /**
      * @param  array<string, mixed>  $data
      */
-    public function sendRegisterMail(string $to, array $data): JsonResponse
+    public function signUpMail(string $to, array $data): JsonResponse
     {
         try {
             Mail::to($to)->send(new RegisterMail($data));
@@ -54,7 +54,7 @@ class MailController extends Controller
     /**
      * @param  array<string, mixed>  $data
      */
-    public function sendVerifyMail(string $to, array $data): JsonResponse
+    public function verifyMail(string $to, array $data): JsonResponse
     {
         try {
             Mail::to($to)->send(new VerifyMail($data));
