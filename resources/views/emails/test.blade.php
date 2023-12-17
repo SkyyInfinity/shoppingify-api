@@ -7,6 +7,6 @@ Ceci est un exemple de mail, il a été envoyé par {{ $name }}
 Accéder au site
 </x-mail::button>
 
-Merci,<br>
-{{ config('app.name') }}
+Merci de votre confiance,<br>
+L'équipe {{ config('app.name') }}
 </x-mail::message>
