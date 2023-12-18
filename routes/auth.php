@@ -17,7 +17,7 @@ Route::group(['prefix' => 'auth'], function ($router) {
     /**
      * Sign up a new user
      */
-    Route::post('signup', [\App\Http\Controllers\AuthController::class, 'signUp'])->name('auth.signup');
+    Route::post('register', [\App\Http\Controllers\AuthController::class, 'register'])->name('auth.register');
     /**
      * Verify a new user
      */
@@ -25,11 +25,11 @@ Route::group(['prefix' => 'auth'], function ($router) {
     /**
      * Sign in a user
      */
-    Route::post('signin', [\App\Http\Controllers\AuthController::class, 'signIn'])->name('auth.signin');
+    Route::post('login', [\App\Http\Controllers\AuthController::class, 'login'])->name('auth.login');
     /**
      * Sign out a user
      */
-    Route::post('signout', [\App\Http\Controllers\AuthController::class, 'signOut'])->name('auth.signout');
+    Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('auth.logout');
     /**
      * Refresh a user token
      */

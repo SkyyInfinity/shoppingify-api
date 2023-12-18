@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Auth\SignUpRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\VerifyRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -11,6 +11,9 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    private MailController $mailController;
+    private UtilsController $utilsController;
+
     /**
      * Create a new AuthController instance.
      *
@@ -18,7 +21,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['signIn', 'signUp', 'verify']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'verify']]);
     }
 
     /**
@@ -26,14 +29,12 @@ class AuthController extends Controller
      *
      * @throws ValidationException
      */
-    public function signUp(SignUpRequest $request, UtilsController $utils, MailController $mailController): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
         // Validate request
         $subscriber = $request->validated();
-
         // Generate token
-        $token = $utils->generateToken();
-
+        $token = $this->utilsController->generateToken();
         // Create user
         $user = User::create([
             'username' => $subscriber['username'],
@@ -43,17 +44,10 @@ class AuthController extends Controller
         ]);
 
         // Send email to user with token and user data
-        try {
-            $mailController->signUpMail($user->email, [
-                'user' => $user,
-                'token' => $token,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Email not sent!',
-                'error' => $e->getMessage(),
-            ]);
-        }
+        $this->mailController->registerMail($user->email, [
+            'user' => $user,
+            'token' => $token,
+        ]);
 
         // Return response
         return response()->json([
@@ -65,18 +59,14 @@ class AuthController extends Controller
     /**
      * @throws ValidationException
      */
-    public function verify(VerifyRequest $request, MailController $mailController): JsonResponse
+    public function verify(VerifyRequest $request): JsonResponse
     {
         // Validate request
         $request->validated();
 
-        // Get request params
-        $id = $request->input('id');
-        $token = $request->input('token');
-
         // Find user
         try {
-            $user = User::where('id', $id)->firstOrFail();
+            $user = User::where('id', $request->input('id'))->firstOrFail();
 
             // Check if user is already verified
             if ($user->email_verified_at) {
@@ -87,9 +77,9 @@ class AuthController extends Controller
             }
 
             // Check if token is valid
-            if ($user->action_token !== $token) {
+            if ($user->action_token !== $request->input('token')) {
                 return response()->json([
-                    'message' => 'Invalid or expired token!',
+                    'message' => 'Invalid token!',
                     'success' => false,
                 ], 400);
             }
@@ -106,28 +96,21 @@ class AuthController extends Controller
         $user->save();
 
         // Send email to user with token and user data
-        try {
-            $mailController->verifyMail($user->email, [
-                'user' => $user,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Email not sent!',
-                'error' => $e->getMessage(),
-            ]);
-        }
+        $this->mailController->verifyMail($user->email, [
+            'user' => $user,
+        ]);
 
         // Return response
         return response()->json([
             'message' => 'Email verified successfully!',
-            'success' => true,
+            'success' => true
         ]);
     }
 
     /**
      * Get a JWT via given credentials.
      */
-    public function signIn(): JsonResponse
+    public function login(): JsonResponse
     {
         $credentials = request(['email', 'password']);
 
@@ -135,7 +118,11 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60 // @phpstan-ignore-line
+        ]);
     }
 
     /**
@@ -149,11 +136,14 @@ class AuthController extends Controller
     /**
      * Log the user out (Invalidate the token).
      */
-    public function signOut(): JsonResponse
+    public function logout(): JsonResponse
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json([
+            'message' => 'Successfully logged out!',
+            'success' => true
+        ]);
     }
 
     /**
@@ -162,17 +152,5 @@ class AuthController extends Controller
     public function refresh(): JsonResponse
     {
         return $this->respondWithToken(auth()->refresh());
-    }
-
-    /**
-     * Get the token array structure.
-     */
-    protected function respondWithToken(string $token): JsonResponse
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60, // @phpstan-ignore-line
-        ]);
     }
 }

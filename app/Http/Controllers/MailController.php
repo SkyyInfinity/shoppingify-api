@@ -18,37 +18,35 @@ class MailController extends Controller
             Mail::to('john.doe@gmail.com')->send(new TestMail([
                 'name' => $name,
             ]));
-        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Email sent successfully!',
+                'success' => true,
+            ]);
+        } catch(\Exception $e) {
             return response()->json([
                 'message' => 'Email not sent!',
                 'error' => $e->getMessage(),
             ]);
         }
-
-        return response()->json([
-            'message' => 'Email sent successfully!',
-            'success' => true,
-        ]);
     }
 
     /**
      * @param  array<string, mixed>  $data
      */
-    public function signUpMail(string $to, array $data): JsonResponse
+    public function registerMail(string $to, array $data): JsonResponse
     {
         try {
             Mail::to($to)->send(new RegisterMail($data));
-        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Email sent successfully!',
+                'success' => true,
+            ]);
+        } catch(\Exception $e) {
             return response()->json([
                 'message' => 'Email not sent!',
                 'error' => $e->getMessage(),
             ]);
         }
-
-        return response()->json([
-            'message' => 'Email sent successfully!',
-            'success' => true,
-        ]);
     }
 
     /**
@@ -58,16 +56,15 @@ class MailController extends Controller
     {
         try {
             Mail::to($to)->send(new VerifyMail($data));
-        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Email sent successfully!',
+                'success' => true,
+            ]);
+        } catch(\Exception $e) {
             return response()->json([
                 'message' => 'Email not sent!',
                 'error' => $e->getMessage(),
             ]);
         }
-
-        return response()->json([
-            'message' => 'Email sent successfully!',
-            'success' => true,
-        ]);
     }
 }
