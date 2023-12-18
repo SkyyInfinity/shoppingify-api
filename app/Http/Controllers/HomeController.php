@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 class HomeController extends Controller
 {
-    public function index(): JsonResponse
+    public function __invoke(): JsonResponse
     {
         $routes = [];
         $routeCollection = Route::getRoutes();

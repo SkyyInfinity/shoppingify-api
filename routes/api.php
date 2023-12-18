@@ -17,4 +17,4 @@ use Illuminate\Support\Facades\Route;
 /**
  * Home page
  */
-Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::get('/', HomeController::class)->name('home.index');

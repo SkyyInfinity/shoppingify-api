@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Checklist;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ChecklistController extends Controller
@@ -10,9 +12,13 @@ class ChecklistController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $checklists = Checklist::query()
+            ->with(['user' => fn ($query) => $query->select('id', 'username', 'email', 'last_login_at')])
+            ->get()
+            ->makeHidden('user_id');
+        return response()->json($checklists);
     }
 
     /**
