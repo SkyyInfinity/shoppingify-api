@@ -11,8 +11,8 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    private MailController $mailController;
-    private UtilsController $utilsController;
+    private readonly MailController $mailController;
+    private readonly UtilsController $utilsController;
 
     /**
      * Create a new AuthController instance.
@@ -21,7 +21,13 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'verify']]);
+        $this->middleware('auth:api', [
+            'except' => [
+                'login',
+                'register',
+                'verify'
+            ]
+        ]);
     }
 
     /**

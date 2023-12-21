@@ -6,6 +6,7 @@ use App\Models\Checklist;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use JetBrains\PhpStorm\NoReturn;
 
 class ChecklistController extends Controller
 {
@@ -22,34 +23,122 @@ class ChecklistController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Display a listing of the resource.
      */
-    public function store(Request $request)
+    public function current(): JsonResponse
     {
-        //
+        if(!auth()->check()) {
+            return response()->json([
+                'message' => 'Unauthenticated',
+                'success' => false,
+            ], 401);
+        }
+
+        $checklists = Checklist::query()
+            ->where([
+                'user_id' => auth()->id(),
+                'status' => 'pending'
+            ])
+            ->get()
+            ->first();
+        return response()->json($checklists);
     }
 
     /**
-     * Display the specified resource.
+     * Store a newly created resource in storage.
      */
-    public function show(Checklist $checklist)
+    public function store(Request $request): JsonResponse
     {
-        //
+        if(!auth()->check()) {
+            return response()->json([
+                'message' => 'Unauthenticated',
+                'success' => false,
+            ], 401);
+        }
+
+        Checklist::query()->create([
+            'id' => uniqid(),
+            'user_id' => auth()->id(),
+            'name' => $request->name,
+            'status' => 'pending'
+        ]);
+        return response()->json([
+            'message' => 'Checklist created successfully',
+            'success' => true,
+        ], 201);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Checklist $checklist)
+    public function update(Request $request, string $id)
     {
-        //
+        if(!auth()->check()) {
+            return response()->json([
+                'message' => 'Unauthenticated',
+                'success' => false,
+            ], 401);
+        }
+
+        $checklist = Checklist::query()
+            ->where([
+                'id' => $id,
+                'user_id' => auth()->id(),
+                'status' => 'pending'
+            ])
+            ->get()
+            ->first();
+
+        if(!$checklist) {
+            return response()->json([
+                'message' => 'Checklist not found',
+                'success' => false,
+            ], 404);
+        }
+
+        $checklist->update([
+            'name' => $request->name ?? $checklist->name,
+            'status' => $request->status ?? $checklist->status
+        ]);
+
+        return response()->json([
+            'message' => 'Checklist updated successfully',
+            'success' => true,
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Checklist $checklist)
+    public function destroy(string $id)
     {
-        //
+        if(!auth()->check()) {
+            return response()->json([
+                'message' => 'Unauthenticated',
+                'success' => false,
+            ], 401);
+        }
+
+        $checklist = Checklist::query()
+            ->where([
+                'id' => $id,
+                'user_id' => auth()->id()
+            ])
+            ->get()
+            ->first();
+
+        if(!$checklist) {
+            return response()->json([
+                'message' => 'Checklist not found',
+                'success' => false,
+            ], 404);
+        }
+
+        $checklist->delete();
+
+        return response()->json([
+            'message' => 'Checklist deleted successfully',
+            'success' => true,
+        ], 200);
     }
 }

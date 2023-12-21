@@ -16,8 +16,24 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'checklists'], function () {
 
     /**
-     * Send test email
+     * Get all checklists
      */
     Route::get('/', [ChecklistController::class, 'index'])->name('checklists.index');
+    /**
+     * Get current user checklists
+     */
+    Route::get('/current', [ChecklistController::class, 'current'])->name('checklists.current');
+    /**
+     * Create new checklist
+     */
+    Route::post('/create', [ChecklistController::class, 'store'])->name('checklists.create');
+    /**
+     * Update checklist
+     */
+    Route::patch('/edit/{id}', [ChecklistController::class, 'update'])->name('checklists.edit');
+    /**
+     * Delete checklist
+     */
+    Route::delete('/delete/{id}', [ChecklistController::class, 'destroy'])->name('checklists.delete');
 
 });
