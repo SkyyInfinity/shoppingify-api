@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperChecklist
+ */
 class Checklist extends Model
 {
     use HasFactory, HasUuids;
@@ -21,7 +23,7 @@ class Checklist extends Model
         'user_id',
         'name',
         'status',
-        'completed_at'
+        'completed_at',
     ];
 
     /**
@@ -30,7 +32,7 @@ class Checklist extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'completed_at' => 'datetime'
+        'completed_at' => 'datetime',
     ];
 
     /**

@@ -18,11 +18,12 @@ class MailController extends Controller
             Mail::to('john.doe@gmail.com')->send(new TestMail([
                 'name' => $name,
             ]));
+
             return response()->json([
                 'message' => 'Email sent successfully!',
                 'success' => true,
             ]);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Email not sent!',
                 'error' => $e->getMessage(),
@@ -37,11 +38,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($to)->send(new RegisterMail($data));
+
             return response()->json([
                 'message' => 'Email sent successfully!',
                 'success' => true,
             ]);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Email not sent!',
                 'error' => $e->getMessage(),
@@ -56,11 +58,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($to)->send(new VerifyMail($data));
+
             return response()->json([
                 'message' => 'Email sent successfully!',
                 'success' => true,
             ]);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Email not sent!',
                 'error' => $e->getMessage(),

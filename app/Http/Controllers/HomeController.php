@@ -12,8 +12,8 @@ class HomeController extends Controller
         $routes = [];
         $routeCollection = Route::getRoutes();
 
-        foreach ($routeCollection as $value) {
-            if(!str_starts_with($value->uri, '_') && !str_starts_with($value->uri, 'sanctum')) {
+        foreach ($routeCollection->getRoutes() as $value) {
+            if (! str_starts_with($value->uri, '_') && ! str_starts_with($value->uri, 'sanctum')) {
                 $routes[] = [
                     'uri' => $value->uri,
                     'methods' => $value->methods,
@@ -28,7 +28,7 @@ class HomeController extends Controller
             'php' => PHP_VERSION,
             'message' => 'Welcome to '.config('app.name').'!',
             'status' => 200,
-            'routes' => $routes
+            'routes' => $routes,
         ]);
     }
 }

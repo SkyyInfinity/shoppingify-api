@@ -12,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     private readonly MailController $mailController;
+
     private readonly UtilsController $utilsController;
 
     /**
@@ -19,14 +20,17 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(MailController $mailController, UtilsController $utilsController)
     {
+        $this->mailController = $mailController;
+        $this->utilsController = $utilsController;
+
         $this->middleware('auth:api', [
             'except' => [
                 'login',
                 'register',
-                'verify'
-            ]
+                'verify',
+            ],
         ]);
     }
 
@@ -109,7 +113,7 @@ class AuthController extends Controller
         // Return response
         return response()->json([
             'message' => 'Email verified successfully!',
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -127,7 +131,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60 // @phpstan-ignore-line
+            'expires_in' => auth()->factory()->getTTL() * 60, // @phpstan-ignore-line
         ]);
     }
 
@@ -148,7 +152,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Successfully logged out!',
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -157,6 +161,6 @@ class AuthController extends Controller
      */
     public function refresh(): JsonResponse
     {
-        return $this->respondWithToken(auth()->refresh());
+        return $this->respondWithToken(auth()->refresh()); // @phpstan-ignore-line
     }
 }

@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Checklist;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use JetBrains\PhpStorm\NoReturn;
 
 class ChecklistController extends Controller
 {
@@ -19,6 +17,7 @@ class ChecklistController extends Controller
             ->with(['user' => fn ($query) => $query->select('id', 'username', 'email', 'last_login_at')])
             ->get()
             ->makeHidden('user_id');
+
         return response()->json($checklists);
     }
 
@@ -27,7 +26,7 @@ class ChecklistController extends Controller
      */
     public function current(): JsonResponse
     {
-        if(!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json([
                 'message' => 'Unauthenticated',
                 'success' => false,
@@ -37,10 +36,10 @@ class ChecklistController extends Controller
         $checklists = Checklist::query()
             ->where([
                 'user_id' => auth()->id(),
-                'status' => 'pending'
+                'status' => 'pending',
             ])
-            ->get()
             ->first();
+
         return response()->json($checklists);
     }
 
@@ -49,7 +48,7 @@ class ChecklistController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        if(!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json([
                 'message' => 'Unauthenticated',
                 'success' => false,
@@ -60,8 +59,9 @@ class ChecklistController extends Controller
             'id' => uniqid(),
             'user_id' => auth()->id(),
             'name' => $request->name,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
+
         return response()->json([
             'message' => 'Checklist created successfully',
             'success' => true,
@@ -73,7 +73,7 @@ class ChecklistController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if(!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json([
                 'message' => 'Unauthenticated',
                 'success' => false,
@@ -84,12 +84,11 @@ class ChecklistController extends Controller
             ->where([
                 'id' => $id,
                 'user_id' => auth()->id(),
-                'status' => 'pending'
+                'status' => 'pending',
             ])
-            ->get()
             ->first();
 
-        if(!$checklist) {
+        if (! $checklist) {
             return response()->json([
                 'message' => 'Checklist not found',
                 'success' => false,
@@ -98,7 +97,7 @@ class ChecklistController extends Controller
 
         $checklist->update([
             'name' => $request->name ?? $checklist->name,
-            'status' => $request->status ?? $checklist->status
+            'status' => $request->status ?? $checklist->status,
         ]);
 
         return response()->json([
@@ -112,7 +111,7 @@ class ChecklistController extends Controller
      */
     public function destroy(string $id)
     {
-        if(!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json([
                 'message' => 'Unauthenticated',
                 'success' => false,
@@ -122,12 +121,11 @@ class ChecklistController extends Controller
         $checklist = Checklist::query()
             ->where([
                 'id' => $id,
-                'user_id' => auth()->id()
+                'user_id' => auth()->id(),
             ])
-            ->get()
             ->first();
 
-        if(!$checklist) {
+        if (! $checklist) {
             return response()->json([
                 'message' => 'Checklist not found',
                 'success' => false,

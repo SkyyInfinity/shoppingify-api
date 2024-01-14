@@ -12,6 +12,34 @@
 
 namespace App\Models{
 /**
+ * App\Models\Checklist
+ *
+ * @property string $id
+ * @property string $user_id
+ * @property string $name
+ * @property string $status pending, completed, or cancelled
+ * @property \Illuminate\Support\Carbon|null $completed_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\ChecklistFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Checklist newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Checklist newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Checklist query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Checklist whereCompletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Checklist whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Checklist whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Checklist whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Checklist whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Checklist whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Checklist whereUserId($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperChecklist {}
+}
+
+namespace App\Models{
+/**
  * App\Models\User
  *
  * @phpstan-ignore-next-line 
@@ -24,6 +52,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $last_login_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Checklist|null $checklist
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
